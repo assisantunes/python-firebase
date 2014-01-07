@@ -2,8 +2,19 @@ import requests
 import urlparse #for urlparse and urljoin
 import os #for os.path.dirname
 import json #for dumps
+import datetime #for parse datetime object to string
+import decimal #for parse decimal to string
 
-
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        elif isinstance(obj, datetime.timedelta):
+            return total_seconds(obj)
+        elif isinstance(obj, decimal.Decimal):
+            return float(obj)
+        else:
+            return json.JSONEncoder.default(self, obj)
 
 class Firebase():
     ROOT_URL = '' #no trailing slash
@@ -75,7 +86,7 @@ class Firebase():
         #Firebase API does not accept form-encoded PUT/POST data. It needs to
         #be JSON encoded.
         if 'data' in kwargs:
-            kwargs['data'] = json.dumps(kwargs['data'])
+            kwargs['data'] = json.dumps(kwargs['data'], cls=JSONEncoder)
 
         params = {}
         if self.auth_token:
