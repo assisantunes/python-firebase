@@ -27,7 +27,7 @@ class Firebase():
 
     def child(self, path):
         root_url = '%s/' % self.ROOT_URL
-        url = urlparse.urljoin(root_url, path.lstrip('/'))
+        url = urlparse.urljoin(root_url, str(path).lstrip('/'))
         return Firebase(url)
 
     def parent(self):
