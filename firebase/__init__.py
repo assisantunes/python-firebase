@@ -18,6 +18,7 @@ class JSONEncoder(json.JSONEncoder):
 
 class Firebase():
     ROOT_URL = '' #no trailing slash
+    auth_token = None
 
     def __init__(self, root_url, auth_token=None):
         self.ROOT_URL = root_url.rstrip('/')
@@ -28,7 +29,7 @@ class Firebase():
     def child(self, path):
         root_url = '%s/' % self.ROOT_URL
         url = urlparse.urljoin(root_url, str(path).lstrip('/'))
-        return Firebase(url)
+        return Firebase(url, auth_token=self.auth_token)
 
     def parent(self):
         url = os.path.dirname(self.ROOT_URL)
@@ -36,7 +37,7 @@ class Firebase():
         up = urlparse.urlparse(url)
         if up.path == '':
             return None #maybe throw exception here?
-        return Firebase(url)
+        return Firebase(url, auth_token=self.auth_token)
 
     def name(self):
         return os.path.basename(self.ROOT_URL)
